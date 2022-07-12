@@ -31,8 +31,8 @@ template <typename T, std::size_t m> linvec<T, m>::linvec() {
 }
 template <typename T, std::size_t m> linvec<T, m>::linvec(std::initializer_list<T> list) {
     lpData_ = new T[m];
-    if (list.size() == static_cast<std::size_t>(0)) {
-        for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    if (list.size() == (std::size_t)0) {
+        for (std::size_t i = (std::size_t)0; i < m; ++i) {
             lpData_[i] = *(list.begin());
         }
     }
@@ -49,7 +49,7 @@ template <typename T, std::size_t m> linvec<T, m>::linvec(std::initializer_list<
 }
 template <typename T, std::size_t m> linvec<T, m>::linvec(const linvec<T, m>& vec) {
     lpData_ = new T[m];
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] = vec[i];
     }
 }
@@ -70,31 +70,31 @@ template <typename T, std::size_t m> T& linvec<T, m>::operator[](std::size_t i) 
     return lpData_[i];
 }
 template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator=(const linvec<T, m>& vec) {
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] = vec[i];
     }
     return *this;
 }
 template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator+=(const linvec<T, m>& vec) {
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] += vec[i];
     }
     return *this;
 }
 template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator-=(const linvec<T, m>& vec) {
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] -= vec[i];
     }
     return *this;
 }
 template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator*=(const T k) {
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] *= k;
     }
     return *this;
 }
 template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator/=(const T k) {
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         lpData_[i] /= k;
     }
     return *this;
@@ -109,14 +109,14 @@ template <typename T, std::size_t m> T* linvec<T, m>::ptr() const noexcept {
 // ベクトル和・差
 template <typename T, std::size_t m> linvec<T, m> operator+(const linvec<T, m>& v1, const linvec<T, m>& v2) {
     linvec<T, m> res = linvec<T, m>();
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         res[i] = v1[i] + v2[i];
     }
     return res;
 }
 template <typename T, std::size_t m> linvec<T, m> operator-(const linvec<T, m>& v1, const linvec<T, m>& v2) {
     linvec<T, m> res = linvec<T, m>();
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         res[i] = v1[i] - v2[i];
     }
     return res;
@@ -124,24 +124,35 @@ template <typename T, std::size_t m> linvec<T, m> operator-(const linvec<T, m>& 
 // スカラー積・商
 template <typename T, std::size_t m> linvec<T, m> operator*(const linvec<T, m>& vec, const T k) {
     linvec<T, m> res = linvec<T, m>();
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         res[i] = vec[i] * k;
     }
     return res;
 }
 template <typename T, std::size_t m> linvec<T, m> operator*(const T k, const linvec<T, m>& vec) {
     linvec<T, m> res = linvec<T, m>();
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         res[i] = k * vec[i];
     }
     return res;
 }
 template <typename T, std::size_t m> linvec<T, m> operator/(const linvec<T, m>& vec, const T k) {
     linvec<T, m> res = linvec<T, m>();
-    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+    for (std::size_t i = (std::size_t)0; i < m; ++i) {
         res[i] = vec[i] / k;
     }
     return res;
 }
+
+template <typename T, std::size_t m, std::size_t n> class matrix {
+private:
+    T** lplpData;
+
+public:
+    matrix();
+    matrix(std::initializer_list<T> list);
+    matrix(const matrix<T, m, n>& mat);
+    ~matrix();
+};
 
 } // namespace skrbcr
