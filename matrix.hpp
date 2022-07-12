@@ -4,38 +4,42 @@
 
 namespace skrbcr {
 
-template <typename T, std::size_t m> class linvector {
+template <typename T, std::size_t m> class linvec {
 private:
-    T* vec_;    // 配列
+    T* lpData_;    // データ配列
 
 public:
-    linvector();
-    linvector(std::initializer_list<T> list);
-    linvector(const linvector<T, m>& v);
-    ~linvector();
+    linvec();
+    linvec(std::initializer_list<T> list);
+    linvec(const linvec<T, m>& vec);
+    ~linvec();
 
     const T& operator[](std::size_t i) const;
     T& operator[](std::size_t i);
-    linvector<T, m>& operator=(const linvector<T, m> v);
+    linvec<T, m>& operator=(const linvec<T, m>& vec);
+    linvec<T, m>& operator+=(const linvec<T, m>& vec);
+    linvec<T, m>& operator-=(const linvec<T, m>& vec);
+    linvec<T, m>& operator*=(const T k);
+    linvec<T, m>& operator/=(const T k);
 
     // 配列を取得
     T* ptr() const noexcept;
 };
 
-template <typename T, std::size_t m> linvector<T, m>::linvector() {
-    vec_ = new int[m];
+template <typename T, std::size_t m> linvec<T, m>::linvec() {
+    lpData_ = new T[m];
 }
-template <typename T, std::size_t m> linvector<T, m>::linvector(std::initializer_list<T> list) {
-    vec_ = new int[m];
+template <typename T, std::size_t m> linvec<T, m>::linvec(std::initializer_list<T> list) {
+    lpData_ = new T[m];
     if (list.size() == static_cast<std::size_t>(0)) {
         for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
-            vec_[i] = *(list.begin());
+            lpData_[i] = *(list.begin());
         }
     }
     else if (list.size() == m) {
         int i = 0;
         for (auto it = list.begin(); it != list.end(); ++it) {
-            vec_[i] = *it;
+            lpData_[i] = *it;
             ++i;
         }
     }
@@ -43,54 +47,101 @@ template <typename T, std::size_t m> linvector<T, m>::linvector(std::initializer
         throw std::invalid_argument("Error: Length of list is wrong.");
     }
 }
-template <typename T, std::size_t m> linvector<T, m>::linvector(const linvector<T, m>& v) {
-    vec_ = new int[m];
+template <typename T, std::size_t m> linvec<T, m>::linvec(const linvec<T, m>& vec) {
+    lpData_ = new T[m];
     for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
-        vec_[i] = v[i];
+        lpData_[i] = vec[i];
     }
 }
-template <typename T, std::size_t m> linvector<T, m>::~linvector() {
-    delete[] vec_;
+template <typename T, std::size_t m> linvec<T, m>::~linvec() {
+    delete[] lpData_;
 }
 
-template <typename T, std::size_t m> const T& linvector<T, m>::operator[](std::size_t i) const {
+template <typename T, std::size_t m> const T& linvec<T, m>::operator[](std::size_t i) const {
     if (i < 0 || i >= m) {
         throw std::out_of_range("Error: Index out of range.");
     }
-    return vec_[i];
+    return lpData_[i];
 }
-template <typename T, std::size_t m> T& linvector<T, m>::operator[](std::size_t i) {
+template <typename T, std::size_t m> T& linvec<T, m>::operator[](std::size_t i) {
     if (i < 0 || i >= m) {
         throw std::out_of_range("Error: Index out of range.");
     }
-    return vec_[i];
+    return lpData_[i];
 }
-template <typename T, std::size_t m> linvector<T, m>& linvector<T, m>::operator=(const linvector<T, m> v) {
+template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator=(const linvec<T, m>& vec) {
     for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
-        vec_[i] = v[i];
+        lpData_[i] = vec[i];
+    }
+    return *this;
+}
+template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator+=(const linvec<T, m>& vec) {
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        lpData_[i] += vec[i];
+    }
+    return *this;
+}
+template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator-=(const linvec<T, m>& vec) {
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        lpData_[i] -= vec[i];
+    }
+    return *this;
+}
+template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator*=(const T k) {
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        lpData_[i] *= k;
+    }
+    return *this;
+}
+template <typename T, std::size_t m> linvec<T, m>& linvec<T, m>::operator/=(const T k) {
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        lpData_[i] /= k;
     }
     return *this;
 }
 
-template <typename T, std::size_t m> T* linvector<T, m>::ptr() const noexcept {
-    return vec_;
+template <typename T, std::size_t m> T* linvec<T, m>::ptr() const noexcept {
+    return lpData_;
 }
 
 
 /* Arithmetic Operaters */
-
-template <typename T, std::size_t m> linvector<T, m> operator+(const linvector<T, m>& v1, const linvector<T, m>& v2) {
-    linvector<T, m> res = linvector<T, m>();
+// ベクトル和・差
+template <typename T, std::size_t m> linvec<T, m> operator+(const linvec<T, m>& v1, const linvec<T, m>& v2) {
+    linvec<T, m> res = linvec<T, m>();
     for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
         res[i] = v1[i] + v2[i];
     }
     return res;
 }
-template <typename T, std::size_t m> linvector<T, m> operator-(const linvector<T, m>& v1, const linvector<T, m>& v2) {
-    linvector<T, m> res = linvector<T, m>();
+template <typename T, std::size_t m> linvec<T, m> operator-(const linvec<T, m>& v1, const linvec<T, m>& v2) {
+    linvec<T, m> res = linvec<T, m>();
     for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
         res[i] = v1[i] - v2[i];
     }
+    return res;
+}
+// スカラー積・商
+template <typename T, std::size_t m> linvec<T, m> operator*(const linvec<T, m>& vec, const T k) {
+    linvec<T, m> res = linvec<T, m>();
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        res[i] = vec[i] * k;
+    }
+    return res;
+}
+template <typename T, std::size_t m> linvec<T, m> operator*(const T k, const linvec<T, m>& vec) {
+    linvec<T, m> res = linvec<T, m>();
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        res[i] = k * vec[i];
+    }
+    return res;
+}
+template <typename T, std::size_t m> linvec<T, m> operator/(const linvec<T, m>& vec, const T k) {
+    linvec<T, m> res = linvec<T, m>();
+    for (std::size_t i = static_cast<std::size_t>(0); i < m; ++i) {
+        res[i] = vec[i] / k;
+    }
+    return res;
 }
 
 } // namespace skrbcr
